@@ -11,5 +11,16 @@ export default defineConfig({
   build: {
     outDir: "../dist",
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          msal: ["@azure/msal-browser", "@azure/msal-react"],
+          fluentui: ["@fluentui/react-components"],
+          router: ["react-router-dom"],
+        },
+      },
+    },
   },
+  publicDir: "../public",
 });
