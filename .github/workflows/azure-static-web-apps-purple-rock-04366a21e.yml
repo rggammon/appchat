@@ -26,13 +26,13 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_ROCK_04366A21E }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          skip_app_build: true
+          # Build configuration for Vite + React
+          app_location: "/" # App source code path (where package.json is)
+          output_location: "/dist" # Vite build output
+          # Remove or set skip_app_build to false so Azure builds the app
+          skip_app_build: false
           skip_api_build: true
-          app_location: "/src" # App source code path
           api_location: "" # Api source code path - optional
-          output_location: "" # Built app content directory - optional
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
