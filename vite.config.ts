@@ -18,9 +18,14 @@ export default defineConfig({
           msal: ["@azure/msal-browser", "@azure/msal-react"],
           fluentui: ["@fluentui/react-components"],
           router: ["react-router-dom"],
+          appinsights: [
+            "@microsoft/applicationinsights-web",
+            "@microsoft/applicationinsights-react-js",
+          ],
         },
       },
     },
   },
   publicDir: "../public",
+  envDir: "..",
 });

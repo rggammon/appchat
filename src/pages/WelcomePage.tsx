@@ -1,5 +1,5 @@
 import React from "react";
-import MicrosoftLoginButton from "./MicrosoftLoginButton";
+import MicrosoftLoginButton from "../components/MicrosoftLoginButton";
 
 export default function WelcomePage() {
   return (

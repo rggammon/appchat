@@ -4,7 +4,8 @@ import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 import { MsalProvider, useMsal, UnauthenticatedTemplate } from "@azure/msal-react";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { HomePage, WelcomePage } from "./components";
+import { HomePage, WelcomePage } from "./pages";
+import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 
 const msalConfig = {
   auth: {
@@ -18,6 +19,16 @@ const msalConfig = {
   },
 };
 const msalInstance = new PublicClientApplication(msalConfig);
+
+// Vite environment variables must be prefixed with VITE_ to be exposed to the client
+const appInsightsConnectionString = import.meta.env.VITE_APPINSIGHTS_CONNECTION_STRING;
+const appInsights = new ApplicationInsights({
+  config: {
+    connectionString: appInsightsConnectionString,
+    enableAutoRouteTracking: true,
+  },
+});
+appInsights.loadAppInsights();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { accounts } = useMsal();
