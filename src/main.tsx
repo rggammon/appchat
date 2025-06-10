@@ -73,31 +73,32 @@ msalInstance.initialize().then(() => {
   }
 });
 
-const App = () => {
+const App = () => (
+  <MsalProvider instance={msalInstance}>
+    <FluentProvider theme={webLightTheme}>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </FluentProvider>
+  </MsalProvider>
+);
+
+function AppRoutes() {
   useTrackPageViews(appInsights);
   return (
-    <MsalProvider instance={msalInstance}>
-      <FluentProvider theme={webLightTheme}>
-        <BrowserRouter>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <HomePage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/welcome" element={<LoginRoute />} />
-              <Route
-                path="*"
-                element={<Navigate to="/" replace />}
-              />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </FluentProvider>
-    </MsalProvider>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <HomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/welcome" element={<LoginRoute />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Suspense>
   );
-};
+}
