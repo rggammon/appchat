@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { Button, Input } from "@fluentui/react-components";
+import React, { useState, useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
+import { appInsights } from "../main";
+import ChatControl from "../components/ChatControl";
 
 // Earth tone palette
 const earthBackground = "#f5f3ea";
@@ -25,12 +26,19 @@ export default function HomePage() {
   const user = accounts[0];
   const userName = user?.name || "User";
   const userEmail = user?.username || "";
+  const userId = user?.localAccountId || user?.homeAccountId || undefined;
 
   const [messages, setMessages] = useState<Array<{ sender: string; text: string }>>([
     { sender: "Azure AI", text: "Hi! I'm your potato-powered chat assistant. Ask me anything!" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (userEmail && userId && appInsights?.setAuthenticatedUserContext) {
+      appInsights.setAuthenticatedUserContext(userEmail, userId);
+    }
+  }, [userEmail, userId]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -54,29 +62,17 @@ export default function HomePage() {
       </header>
       <main style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
         {/* Chat Control */}
-        <div style={{ width: 400, maxWidth: "100%", background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px #b7a77a33", padding: 16, margin: "32px 0" }}>
-          <div style={{ height: 240, overflowY: "auto", marginBottom: 12, background: "#f5f3ea", borderRadius: 8, padding: 8, border: `1px solid ${earthHeaderFooter}` }}>
-            {messages.map((msg, idx) => (
-              <div key={idx} style={{ marginBottom: 8, textAlign: msg.sender === userName ? "right" : "left" }}>
-                <span style={{ fontWeight: 600, color: msg.sender === userName ? earthAccent : earthHeaderText }}>{msg.sender}:</span>
-                <span style={{ marginLeft: 6, color: earthMainText }}>{msg.text}</span>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: "flex", gap: 8 }}>
-            <Input
-              value={input}
-              onChange={(_, d) => setInput(d.value)}
-              placeholder="Type your message..."
-              style={{ flex: 1 }}
-              onKeyDown={e => { if (e.key === "Enter") handleSend(); }}
-              disabled={loading}
-            />
-            <Button appearance="primary" onClick={handleSend} disabled={loading || !input.trim()} style={{ background: earthAccent, color: "#fff" }}>
-              {loading ? "..." : "Send"}
-            </Button>
-          </div>
-        </div>
+        <ChatControl
+          messages={messages}
+          input={input}
+          loading={loading}
+          userName={userName}
+          chatAccent={earthAccent}
+          chatHeaderText={earthHeaderText}
+          chatMainText={earthMainText}
+          onInputChange={setInput}
+          onSend={handleSend}
+        />
       </main>
       <footer style={{ background: earthHeaderFooter, padding: "0.5rem", borderTop: `1px solid ${earthAccent}`, textAlign: "center" }}>
         <small style={{ color: earthHeaderText }}>&copy; {new Date().getFullYear()} Vibetato</small>

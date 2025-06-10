@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import { FluentProvider, webLightTheme } from "@fluentui/react-components";
 import { MsalProvider, useMsal, UnauthenticatedTemplate } from "@azure/msal-react";
 import { PublicClientApplication } from "@azure/msal-browser";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { HomePage, WelcomePage } from "./pages";
 import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 
@@ -30,6 +30,9 @@ const appInsights = new ApplicationInsights({
 });
 appInsights.loadAppInsights();
 
+// Export the Application Insights instance for use in other modules
+export { appInsights };
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { accounts } = useMsal();
   if (!accounts || accounts.length === 0) {
@@ -50,6 +53,13 @@ function LoginRoute() {
   );
 }
 
+function useTrackPageViews(appInsights: ApplicationInsights) {
+  const location = useLocation();
+  useEffect(() => {
+    appInsights.trackPageView({ name: location.pathname, uri: window.location.href });
+  }, [location, appInsights]);
+}
+
 // Ensure MSAL handles the redirect promise and is initialized before rendering the app
 msalInstance.initialize().then(() => {
   msalInstance.handleRedirectPromise().catch(e => {
@@ -63,28 +73,31 @@ msalInstance.initialize().then(() => {
   }
 });
 
-const App = () => (
-  <MsalProvider instance={msalInstance}>
-    <FluentProvider theme={webLightTheme}>
-      <BrowserRouter>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <HomePage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/welcome" element={<LoginRoute />} />
-            <Route
-              path="*"
-              element={<Navigate to="/" replace />}
-            />
-          </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </FluentProvider>
-  </MsalProvider>
-);
+const App = () => {
+  useTrackPageViews(appInsights);
+  return (
+    <MsalProvider instance={msalInstance}>
+      <FluentProvider theme={webLightTheme}>
+        <BrowserRouter>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <HomePage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/welcome" element={<LoginRoute />} />
+              <Route
+                path="*"
+                element={<Navigate to="/" replace />}
+              />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </FluentProvider>
+    </MsalProvider>
+  );
+};
