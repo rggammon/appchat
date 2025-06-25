@@ -27,6 +27,8 @@ export default defineConfig({
             "@microsoft/applicationinsights-web",
             "@microsoft/applicationinsights-react-js",
           ],
+          axios: ["axios"],
+          redux: ["@reduxjs/toolkit", "react-redux"],
         },
       },
     },

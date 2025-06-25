@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { appInsights } from "../main";
+import { useIdentity } from "./useIdentity";
+import axios from "axios";
 
 export interface ChatMessage {
   sender: string;
@@ -7,16 +9,12 @@ export interface ChatMessage {
 }
 
 export interface UseChatApiOptions {
-  instance: any;
-  account: any;
   apiUrl: string;
   apiScope: string;
   senderName?: string;
 }
 
 export function useChatApi({
-  instance,
-  account,
   apiUrl,
   apiScope,
   senderName = "Vibetato",
@@ -30,6 +28,9 @@ export function useChatApi({
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
 
+  // Use useIdentity for token acquisition with overlay support
+  const { acquireToken } = useIdentity();
+
   const sendMessage = async (userName: string) => {
     if (!input.trim()) return;
     const userMsg = { sender: userName, text: input };
@@ -39,33 +40,18 @@ export function useChatApi({
     try {
       let accessToken = "";
       try {
-        const tokenResponse = await instance.acquireTokenSilent({
-          account,
-          scopes: [apiScope],
-        });
+        const tokenResponse = await acquireToken([apiScope]);
         accessToken = tokenResponse.accessToken;
       } catch (tokenError: any) {
-        if (tokenError.errorCode === "interaction_required") {
-          try {
-            const tokenResponse = await instance.acquireTokenPopup({
-              account,
-              scopes: [apiScope],
-            });
-            accessToken = tokenResponse.accessToken;
-          } catch (popupError) {
-            setMessages((msgs) => [
-              ...msgs,
-              {
-                sender: senderName,
-                text: `Authentication required. Please sign in again.`,
-              },
-            ]);
-            setLoading(false);
-            return;
-          }
-        } else {
-          throw tokenError;
-        }
+        setMessages((msgs) => [
+          ...msgs,
+          {
+            sender: senderName,
+            text: `Authentication required. Please sign in again.`,
+          },
+        ]);
+        setLoading(false);
+        return;
       }
       const chatPayload = {
         model: "gpt-4o",
@@ -75,16 +61,13 @@ export function useChatApi({
         ],
         max_tokens: 50,
       };
-      const response = await fetch(apiUrl, {
-        method: "POST",
+      const response = await axios.post(apiUrl, chatPayload, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(chatPayload),
       });
-      if (!response.ok) throw new Error(`AI API error: ${response.status}`);
-      const data = await response.json();
+      const data = response.data;
       setMessages((msgs) => [
         ...msgs,
         {

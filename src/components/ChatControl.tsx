@@ -5,13 +5,10 @@ import { useMsal } from "@azure/msal-react";
 import { useApiConfig } from "../context/ApiConfigContext";
 import { useChatApi } from "../hooks/useChatApi";
 
-interface ChatControlProps {
-  userName: string;
-}
-
-export default function ChatControl({ userName }: ChatControlProps) {
+export default function ChatControl() {
   const { instance, accounts } = useMsal();
   const account = accounts[0];
+  const userName = account?.name || "User";
   const { apiUrl, apiScope, senderName } = useApiConfig();
   const {
     messages,

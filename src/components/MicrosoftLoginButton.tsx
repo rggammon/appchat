@@ -13,18 +13,9 @@ const microsoftLogo = (
   </svg>
 );
 
-// Add the Azure AI Foundry API scope to the initial login request
-const loginRequest = {
-  scopes: [
-    "openid",
-    "profile",
-    "email",
-    import.meta.env.VITE_AZURE_AI_SCOPE,
-  ],
-};
-
-export default function MicrosoftLoginButton() {
+export default function MicrosoftLoginButton({ scopes }: { scopes: string[] }) {
   const { instance } = useMsal();
+  const loginRequest = { scopes };
   const handleLogin = () => {
     instance.loginRedirect(loginRequest);
   };

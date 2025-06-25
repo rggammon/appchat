@@ -8,6 +8,11 @@ import { HomePage, WelcomePage } from "./pages";
 import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { ApiConfigProvider } from "./context/ApiConfigContext";
 import { earthTheme } from "./theme/earthTheme";
+import { Provider as ReduxProvider } from "react-redux";
+import { useAppSelector } from "./store/useAppSelector";
+import store from "./store";
+import PopupAuthOverlay from "./components/PopupAuthOverlay";
+import { useIdentity } from "./hooks/useIdentity";
 
 const msalConfig = {
   auth: {
@@ -41,6 +46,14 @@ const apiConfig = {
   senderName: "Vibetato",
 };
 
+const scopes = [
+    "openid",
+    "profile",
+    "email",
+    "User.Read",
+    import.meta.env.VITE_AZURE_AI_SCOPE,
+  ];
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { accounts } = useMsal();
   if (!accounts || accounts.length === 0) {
@@ -56,7 +69,7 @@ function LoginRoute() {
   }
   return (
     <UnauthenticatedTemplate>
-      <WelcomePage />
+      <WelcomePage scopes={scopes} />
     </UnauthenticatedTemplate>
   );
 }
@@ -81,28 +94,45 @@ msalInstance.initialize().then(() => {
   }
 });
 
-const App = () => (
-  <MsalProvider instance={msalInstance}>
-    <ApiConfigProvider value={apiConfig}>
-      <FluentProvider theme={earthTheme}>
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </FluentProvider>
-    </ApiConfigProvider>
-  </MsalProvider>
-);
+function App() {
+  return (
+    <ReduxProvider store={store}>
+      <MsalProvider instance={msalInstance}>
+        <ApiConfigProvider value={apiConfig}>
+          <FluentProvider theme={earthTheme}>
+            <PopupAuthOverlay scopes={scopes} />
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </FluentProvider>
+        </ApiConfigProvider>
+      </MsalProvider>
+    </ReduxProvider>
+  );
+}
 
 function AppRoutes() {
+  // Set authenticated user context for App Insights globally
+  const { user } = useIdentity();
+  React.useEffect(() => {
+    const userEmail = user?.username || "";
+    const userId = user?.localAccountId || user?.homeAccountId || undefined;
+    if (userEmail && userId && appInsights?.setAuthenticatedUserContext) {
+      appInsights.setAuthenticatedUserContext(userEmail, userId);
+    }
+  }, [user]);
+
+
   useTrackPageViews(appInsights);
+  const errors = useAppSelector((state) => state.auth.errors); // subscribe to errors
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
         <Route
           path="/"
           element={
-            <ProtectedRoute>
-              <HomePage />
+            <ProtectedRoute>              
+              {errors.length === 0 ? <HomePage /> : null}
             </ProtectedRoute>
           }
         />

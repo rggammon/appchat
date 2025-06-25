@@ -2,7 +2,7 @@ import React from "react";
 import MicrosoftLoginButton from "../components/MicrosoftLoginButton";
 import { tokens } from "@fluentui/react-theme";
 
-export default function WelcomePage() {
+export default function WelcomePage({ scopes }: { scopes: string[] }) {
   return (
     <div
       style={{
@@ -29,7 +29,7 @@ export default function WelcomePage() {
         Join our kitchen to mash up ideas, roast your worries, and cook up some fun.
       </p>
       <div style={{ fontSize: 32, marginBottom: 24 }} role="img" aria-label="cooking">🍳🥔🥄</div>
-      <MicrosoftLoginButton />
+      <MicrosoftLoginButton scopes={scopes} />
       <p
         style={{
           marginTop: 32,
