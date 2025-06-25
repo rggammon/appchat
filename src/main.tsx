@@ -6,6 +6,7 @@ import { PublicClientApplication } from "@azure/msal-browser";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { HomePage, WelcomePage } from "./pages";
 import { ApplicationInsights } from "@microsoft/applicationinsights-web";
+import { ApiConfigProvider } from "./context/ApiConfigContext";
 
 const msalConfig = {
   auth: {
@@ -32,6 +33,12 @@ appInsights.loadAppInsights();
 
 // Export the Application Insights instance for use in other modules
 export { appInsights };
+
+const apiConfig = {
+  apiUrl: import.meta.env.VITE_AZURE_AI_API_URL,
+  apiScope: import.meta.env.VITE_AZURE_AI_SCOPE,
+  senderName: "Vibetato",
+};
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { accounts } = useMsal();
@@ -75,11 +82,13 @@ msalInstance.initialize().then(() => {
 
 const App = () => (
   <MsalProvider instance={msalInstance}>
-    <FluentProvider theme={webLightTheme}>
-      <BrowserRouter>
-        <AppRoutes />
-      </BrowserRouter>
-    </FluentProvider>
+    <ApiConfigProvider value={apiConfig}>
+      <FluentProvider theme={webLightTheme}>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </FluentProvider>
+    </ApiConfigProvider>
   </MsalProvider>
 );
 

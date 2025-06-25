@@ -1,32 +1,42 @@
 import React from "react";
 import { Button, Input } from "@fluentui/react-components";
+import { useMsal } from "@azure/msal-react";
+import { useApiConfig } from "../context/ApiConfigContext";
+import { useChatApi } from "../hooks/useChatApi";
 
 interface ChatControlProps {
-  messages: { sender: string; text: string }[];
-  input: string;
-  loading: boolean;
   userName: string;
   chatAccent: string;
   chatHeaderText: string;
   chatMainText: string;
-  onInputChange: (value: string) => void;
-  onSend: () => void;
 }
 
 const earthBackground = "#f5f3ea";
 const earthHeaderFooter = "#b7a77a";
 
 export default function ChatControl({
-  messages,
-  input,
-  loading,
   userName,
   chatAccent,
   chatHeaderText,
   chatMainText,
-  onInputChange,
-  onSend,
 }: ChatControlProps) {
+  const { instance, accounts } = useMsal();
+  const account = accounts[0];
+  const { apiUrl, apiScope, senderName } = useApiConfig();
+  const {
+    messages,
+    input,
+    loading,
+    setInput,
+    sendMessage,
+  } = useChatApi({
+    instance,
+    account,
+    apiUrl,
+    apiScope,
+    senderName,
+  });
+
   return (
     <div style={{ width: 400, maxWidth: "100%", background: "#fff", borderRadius: 12, boxShadow: "0 2px 8px #b7a77a33", padding: 16, margin: "32px 0" }}>
       <div style={{ height: 240, overflowY: "auto", marginBottom: 12, background: earthBackground, borderRadius: 8, padding: 8, border: `1px solid ${earthHeaderFooter}` }}>
@@ -40,13 +50,13 @@ export default function ChatControl({
       <div style={{ display: "flex", gap: 8 }}>
         <Input
           value={input}
-          onChange={(_, d) => onInputChange(d.value)}
+          onChange={(_, d) => setInput(d.value)}
           placeholder="Type your message..."
           style={{ flex: 1 }}
-          onKeyDown={e => { if (e.key === "Enter") onSend(); }}
+          onKeyDown={e => { if (e.key === "Enter") sendMessage(userName); }}
           disabled={loading}
         />
-        <Button appearance="primary" onClick={onSend} disabled={loading || !input.trim()} style={{ background: chatAccent, color: "#fff" }}>
+        <Button appearance="primary" onClick={() => sendMessage(userName)} disabled={loading || !input.trim()} style={{ background: chatAccent, color: "#fff" }}>
           {loading ? "..." : "Send"}
         </Button>
       </div>
