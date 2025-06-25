@@ -12,10 +12,32 @@ const microsoftLogo = (
   </svg>
 );
 
+const msalConfig = {
+  auth: {
+    clientId: "acabfe2e-11cd-4ce0-acbe-94ee0548ead3",
+    authority: "https://login.microsoftonline.com/consumers",
+    redirectUri: window.location.origin,
+  },
+  cache: {
+    cacheLocation: "localStorage",
+    storeAuthStateInCookie: false,
+  },
+};
+
+// Add the Azure AI Foundry API scope to the initial login request
+const loginRequest = {
+  scopes: [
+    "openid",
+    "profile",
+    "email",
+    import.meta.env.VITE_AZURE_AI_SCOPE,
+  ],
+};
+
 export default function MicrosoftLoginButton() {
   const { instance } = useMsal();
   const handleLogin = () => {
-    instance.loginRedirect();
+    instance.loginRedirect(loginRequest);
   };
   return (
     <Button
