@@ -1,6 +1,7 @@
 import { Button } from "@fluentui/react-components";
 import { useMsal } from "@azure/msal-react";
 import React from "react";
+import { tokens } from "@fluentui/react-theme";
 
 const microsoftBlue = "#2F2FEE";
 const microsoftLogo = (
@@ -11,18 +12,6 @@ const microsoftLogo = (
     <rect width="9" height="9" x="10" y="10" fill="#FFBA08" />
   </svg>
 );
-
-const msalConfig = {
-  auth: {
-    clientId: "acabfe2e-11cd-4ce0-acbe-94ee0548ead3",
-    authority: "https://login.microsoftonline.com/consumers",
-    redirectUri: window.location.origin,
-  },
-  cache: {
-    cacheLocation: "localStorage",
-    storeAuthStateInCookie: false,
-  },
-};
 
 // Add the Azure AI Foundry API scope to the initial login request
 const loginRequest = {
@@ -44,9 +33,9 @@ export default function MicrosoftLoginButton() {
       appearance="primary"
       onClick={handleLogin}
       style={{
-        background: "#fff",
+        background: tokens.colorNeutralBackground1,
         color: microsoftBlue,
-        border: `1px solid ${microsoftBlue}`,
+        border: `1px solid ${tokens.colorBrandForeground1}`,
         fontWeight: 600,
         fontSize: 16,
         boxShadow: "0 1px 2px #0001",

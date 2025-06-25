@@ -1,12 +1,13 @@
 import React, { Suspense, useEffect } from "react";
 import ReactDOM from "react-dom/client";
-import { FluentProvider, webLightTheme } from "@fluentui/react-components";
+import { FluentProvider } from "@fluentui/react-components";
 import { MsalProvider, useMsal, UnauthenticatedTemplate } from "@azure/msal-react";
 import { PublicClientApplication } from "@azure/msal-browser";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { HomePage, WelcomePage } from "./pages";
 import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { ApiConfigProvider } from "./context/ApiConfigContext";
+import { earthTheme } from "./theme/earthTheme";
 
 const msalConfig = {
   auth: {
@@ -83,7 +84,7 @@ msalInstance.initialize().then(() => {
 const App = () => (
   <MsalProvider instance={msalInstance}>
     <ApiConfigProvider value={apiConfig}>
-      <FluentProvider theme={webLightTheme}>
+      <FluentProvider theme={earthTheme}>
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>

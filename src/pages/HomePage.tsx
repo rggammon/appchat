@@ -2,13 +2,7 @@ import React, { useEffect } from "react";
 import { useMsal } from "@azure/msal-react";
 import { appInsights } from "../main";
 import ChatControl from "../components/ChatControl";
-
-// Earth tone palette
-const earthBackground = "#f5f3ea";
-const earthHeaderFooter = "#b7a77a";
-const earthHeaderText = "#4e3d1c";
-const earthMainText = "#6b4f27";
-const earthAccent = "#a67c52";
+import { tokens } from "@fluentui/react-theme";
 
 export default function HomePage() {
   const { accounts } = useMsal();
@@ -24,25 +18,20 @@ export default function HomePage() {
   }, [userEmail, userId]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: earthBackground }}>
-      <header style={{ background: earthHeaderFooter, padding: "1rem", borderBottom: `1px solid ${earthAccent}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <h1 style={{ margin: 0, color: earthHeaderText }}>Vibetato</h1>
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: tokens.colorBrandBackground }}>
+      <header style={{ background: tokens.colorNeutralBackground2, padding: "1rem", borderBottom: `1px solid ${tokens.colorBrandForeground1}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <h1 style={{ margin: 0, color: tokens.colorNeutralForeground1 }}>Vibetato</h1>
         <div style={{ textAlign: "right" }}>
-          <div style={{ fontWeight: 500, color: earthHeaderText }}>{userName}</div>
-          <div style={{ fontSize: "0.9em", color: earthMainText }}>{userEmail}</div>
+          <div style={{ fontWeight: 500, color: tokens.colorNeutralForeground1 }}>{userName}</div>
+          <div style={{ fontSize: "0.9em", color: tokens.colorNeutralForeground2 }}>{userEmail}</div>
         </div>
       </header>
       <main style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24 }}>
         {/* Chat Control */}
-        <ChatControl
-          userName={userName}
-          chatAccent={earthAccent}
-          chatHeaderText={earthHeaderText}
-          chatMainText={earthMainText}
-        />
+        <ChatControl userName={userName} />
       </main>
-      <footer style={{ background: earthHeaderFooter, padding: "0.5rem", borderTop: `1px solid ${earthAccent}`, textAlign: "center" }}>
-        <small style={{ color: earthHeaderText }}>&copy; {new Date().getFullYear()} Vibetato</small>
+      <footer style={{ background: tokens.colorNeutralBackground2, padding: "0.5rem", borderTop: `1px solid ${tokens.colorBrandForeground1}`, textAlign: "center" }}>
+        <small style={{ color: tokens.colorNeutralForeground1 }}>&copy; {new Date().getFullYear()} Vibetato</small>
       </footer>
     </div>
   );
