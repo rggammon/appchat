@@ -1,9 +1,19 @@
 import React, { Suspense, useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import { FluentProvider } from "@fluentui/react-components";
-import { MsalProvider, useMsal, UnauthenticatedTemplate } from "@azure/msal-react";
+import {
+  MsalProvider,
+  useMsal,
+  UnauthenticatedTemplate,
+} from "@azure/msal-react";
 import { PublicClientApplication } from "@azure/msal-browser";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
 import { HomePage, WelcomePage } from "./pages";
 import { ApplicationInsights } from "@microsoft/applicationinsights-web";
 import { ApiConfigProvider } from "./context/ApiConfigContext";
@@ -11,7 +21,7 @@ import { earthTheme } from "./theme/earthTheme";
 import { Provider as ReduxProvider } from "react-redux";
 import { useAppSelector } from "./store/useAppSelector";
 import store from "./store";
-import PopupAuthOverlay from "./components/PopupAuthOverlay";
+import PopupAuthOverlay from "./components/shell/PopupAuthOverlay";
 import { useIdentity } from "./hooks/useIdentity";
 
 const msalConfig = {
@@ -28,7 +38,8 @@ const msalConfig = {
 const msalInstance = new PublicClientApplication(msalConfig);
 
 // Vite environment variables must be prefixed with VITE_ to be exposed to the client
-const appInsightsConnectionString = import.meta.env.VITE_APPINSIGHTS_CONNECTION_STRING;
+const appInsightsConnectionString = import.meta.env
+  .VITE_APPINSIGHTS_CONNECTION_STRING;
 const appInsights = new ApplicationInsights({
   config: {
     connectionString: appInsightsConnectionString,
@@ -78,13 +89,16 @@ function LoginRoute() {
 function useTrackPageViews(appInsights: ApplicationInsights) {
   const location = useLocation();
   useEffect(() => {
-    appInsights.trackPageView({ name: location.pathname, uri: window.location.href });
+    appInsights.trackPageView({
+      name: location.pathname,
+      uri: window.location.href,
+    });
   }, [location, appInsights]);
 }
 
 // Ensure MSAL handles the redirect promise and is initialized before rendering the app
 msalInstance.initialize().then(() => {
-  msalInstance.handleRedirectPromise().catch(e => {
+  msalInstance.handleRedirectPromise().catch((e) => {
     console.error(e);
   });
   const rootElement = document.querySelector("main");
@@ -101,7 +115,10 @@ function App() {
       <MsalProvider instance={msalInstance}>
         <ApiConfigProvider value={apiConfig}>
           <FluentProvider theme={earthTheme}>
-            <PopupAuthOverlay graphScopes={graphScopes} customScopes={customScopes} />
+            <PopupAuthOverlay
+              graphScopes={graphScopes}
+              customScopes={customScopes}
+            />
             <BrowserRouter>
               <AppRoutes />
             </BrowserRouter>
@@ -123,7 +140,6 @@ function AppRoutes() {
     }
   }, [user]);
 
-
   useTrackPageViews(appInsights);
   const errors = useAppSelector((state) => state.auth.errors); // subscribe to errors
   return (
@@ -132,7 +148,7 @@ function AppRoutes() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>              
+            <ProtectedRoute>
               {errors.length === 0 ? <HomePage /> : null}
             </ProtectedRoute>
           }

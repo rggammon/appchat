@@ -1,8 +1,8 @@
 import React from "react";
 import { makeStyles, tokens } from "@fluentui/react-components";
 import { LineHorizontal316Regular } from "@fluentui/react-icons";
-import { useUserPhoto } from "../hooks/useUserPhoto";
-import { useIdentity } from "../hooks/useIdentity";
+import { useUserPhoto } from "../../hooks/useUserPhoto";
+import { useIdentity } from "../../hooks/useIdentity";
 
 const useStyles = makeStyles({
   header: {
@@ -74,7 +74,17 @@ export default function TopNav() {
         {userPhoto ? (
           <img src={userPhoto} alt={user.name} className={styles.avatar} />
         ) : (
-          <div className={styles.avatar} style={{ display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600, color: tokens.colorBrandForeground1, fontSize: "1.1rem" }}>
+          <div
+            className={styles.avatar}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 600,
+              color: tokens.colorBrandForeground1,
+              fontSize: "1.1rem",
+            }}
+          >
             {user.name ? user.name[0].toUpperCase() : "?"}
           </div>
         )}

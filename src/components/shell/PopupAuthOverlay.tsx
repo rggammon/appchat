@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { tokens } from "@fluentui/react-theme";
 import { Button } from "@fluentui/react-components";
-import { useAppSelector } from "../store/useAppSelector";
-import { useAppDispatch } from "../store/useAppDispatch";
-import { clearErrors, clearCustomScopeErrors } from "../store/authSlice";
+import { useAppSelector } from "../../store/useAppSelector";
+import { useAppDispatch } from "../../store/useAppDispatch";
+import { clearErrors, clearCustomScopeErrors } from "../../store/authSlice";
 import { useMsal } from "@azure/msal-react";
 
 export default function PopupAuthOverlay({
@@ -109,7 +109,11 @@ export default function PopupAuthOverlay({
           >
             To continue, please sign in with your Microsoft account.
           </p>
-          <Button onClick={handlePopup} style={{ marginRight: 12 }} disabled={popupLoading}>
+          <Button
+            onClick={handlePopup}
+            style={{ marginRight: 12 }}
+            disabled={popupLoading}
+          >
             {popupLoading ? "Opening..." : "Sign in"}
           </Button>
         </div>

@@ -1,2 +1,2 @@
-export { default as MicrosoftLoginButton } from "./MicrosoftLoginButton";
-export { default as ChatControl } from "./ChatControl";
+export { default as MicrosoftLoginButton } from "./controls/MicrosoftLoginButton";
+export { default as ChatControl } from "./controls/ChatControl";
