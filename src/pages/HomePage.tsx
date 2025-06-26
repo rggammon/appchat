@@ -116,7 +116,7 @@ export default function HomePage() {
       style={{
         display: "flex",
         flexDirection: "column",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         background: tokens.colorBrandBackground,
       }}
     >

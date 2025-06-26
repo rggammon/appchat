@@ -2,13 +2,7 @@ import React from "react";
 import MicrosoftLoginButton from "../components/controls/MicrosoftLoginButton";
 import { tokens } from "@fluentui/react-theme";
 
-export default function WelcomePage({
-  scopes,
-  customScopes,
-}: {
-  scopes: string[];
-  customScopes: string[];
-}) {
+export default function WelcomePage({ scopes }: { scopes: string[] }) {
   return (
     <div
       style={{
@@ -16,7 +10,7 @@ export default function WelcomePage({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        minHeight: "100vh",
+        minHeight: "100dvh",
         background: tokens.colorBrandBackground,
       }}
     >
