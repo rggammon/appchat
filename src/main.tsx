@@ -46,13 +46,14 @@ const apiConfig = {
   senderName: "Vibetato",
 };
 
-const scopes = [
-    "openid",
-    "profile",
-    "email",
-    "User.Read",
-    import.meta.env.VITE_AZURE_AI_SCOPE,
-  ];
+const graphScopes = [
+  "openid",
+  "profile",
+  "email",
+  "User.Read",
+  // ...add more Microsoft Graph scopes if needed
+];
+const customScopes = [import.meta.env.VITE_AZURE_AI_SCOPE];
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { accounts } = useMsal();
@@ -69,7 +70,7 @@ function LoginRoute() {
   }
   return (
     <UnauthenticatedTemplate>
-      <WelcomePage scopes={scopes} />
+      <WelcomePage scopes={graphScopes} customScopes={customScopes} />
     </UnauthenticatedTemplate>
   );
 }
@@ -100,7 +101,7 @@ function App() {
       <MsalProvider instance={msalInstance}>
         <ApiConfigProvider value={apiConfig}>
           <FluentProvider theme={earthTheme}>
-            <PopupAuthOverlay scopes={scopes} />
+            <PopupAuthOverlay graphScopes={graphScopes} customScopes={customScopes} />
             <BrowserRouter>
               <AppRoutes />
             </BrowserRouter>

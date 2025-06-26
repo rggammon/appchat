@@ -6,7 +6,7 @@ import { useApiConfig } from "../context/ApiConfigContext";
 import { useChatApi } from "../hooks/useChatApi";
 
 export default function ChatControl() {
-  const { instance, accounts } = useMsal();
+  const { accounts } = useMsal();
   const account = accounts[0];
   const userName = account?.name || "User";
   const { apiUrl, apiScope, senderName } = useApiConfig();
@@ -17,8 +17,6 @@ export default function ChatControl() {
     setInput,
     sendMessage,
   } = useChatApi({
-    instance,
-    account,
     apiUrl,
     apiScope,
     senderName,

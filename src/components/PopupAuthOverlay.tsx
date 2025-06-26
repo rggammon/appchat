@@ -3,19 +3,28 @@ import { tokens } from "@fluentui/react-theme";
 import { Button } from "@fluentui/react-components";
 import { useAppSelector } from "../store/useAppSelector";
 import { useAppDispatch } from "../store/useAppDispatch";
-import { clearErrors } from "../store/authSlice";
+import { clearErrors, clearCustomScopeErrors } from "../store/authSlice";
 import { useMsal } from "@azure/msal-react";
 
 export default function PopupAuthOverlay({
   scopes,
+  customScopes,
 }: {
   scopes: string[];
+  customScopes: string[];
 }) {
   // Read errors from Redux
   const errors = useAppSelector((state) => state.auth.errors);
+  const customScopeErrors = useAppSelector(
+    (state) => state.auth.customScopeErrors
+  );
   const error = errors.length > 0 ? errors[errors.length - 1] : undefined;
+  const customScopeError =
+    customScopeErrors.length > 0
+      ? customScopeErrors[customScopeErrors.length - 1]
+      : undefined;
   // Show overlay if there is any error
-  const visible = !!error;
+  const visible = !!error || !!customScopeError;
   const [popupLoading, setPopupLoading] = useState(false);
   const { instance, accounts } = useMsal();
   const account = accounts[0];
@@ -25,8 +34,13 @@ export default function PopupAuthOverlay({
     if (!instance || !account) return;
     setPopupLoading(true);
     try {
-      await instance.acquireTokenPopup({ account, scopes });
-      dispatch(clearErrors());
+      if (errors) {
+        await instance.acquireTokenPopup({ account, scopes: scopes });
+        dispatch(clearErrors());
+      } else if (customScopeErrors) {
+        await instance.acquireTokenPopup({ account, scopes: customScopes });
+        dispatch(clearCustomScopeErrors());
+      }
       // Success: let the rest of the app handle state update
     } catch (e) {
       // Error: let the rest of the app handle error state
