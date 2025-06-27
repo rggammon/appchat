@@ -12,23 +12,26 @@ import {
 const SECTION_KEYS = ["plan", "shop", "cook", "chat"] as const;
 type SectionKey = (typeof SECTION_KEYS)[number];
 
+// The smallest device in devtools is an iPhone SE at 375px wide.
+// Sections will scale down to 375px, at 2x375px = 750px we can add
+// a section, and at 3x375px = 1125px we can add another section.
 function isMobile() {
   if (typeof window !== "undefined") {
-    return window.innerWidth < 900;
+    return window.innerWidth < 750;
   }
   return false;
 }
 
 function isTablet() {
   if (typeof window !== "undefined") {
-    return window.innerWidth >= 900 && window.innerWidth < 1350;
+    return window.innerWidth >= 750 && window.innerWidth < 1125;
   }
   return false;
 }
 
 function isLaptop() {
   if (typeof window !== "undefined") {
-    return window.innerWidth >= 1350 && window.innerWidth < 1900;
+    return window.innerWidth >= 1125 && window.innerWidth < 1875;
   }
   return false;
 }
