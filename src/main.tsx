@@ -81,7 +81,7 @@ function LoginRoute() {
   }
   return (
     <UnauthenticatedTemplate>
-      <WelcomePage scopes={graphScopes} customScopes={customScopes} />
+      <WelcomePage scopes={[...graphScopes, ...customScopes]} />
     </UnauthenticatedTemplate>
   );
 }

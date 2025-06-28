@@ -40,7 +40,7 @@ export function useChatApi({
     try {
       let accessToken = "";
       try {
-        const tokenResponse = await acquireToken([apiScope]);
+        const tokenResponse = await acquireToken([apiScope], true);
         accessToken = tokenResponse.accessToken;
       } catch (tokenError: any) {
         setMessages((msgs) => [

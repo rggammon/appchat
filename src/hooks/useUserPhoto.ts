@@ -9,7 +9,7 @@ export function useUserPhoto() {
   useEffect(() => {
     const fetchPhoto = async () => {
       try {
-        const response = await acquireToken(["User.Read"]);
+        const response = await acquireToken(["User.Read"], false);
         const accessToken = response.accessToken;
         const graphResponse = await axios.get(
           "https://graph.microsoft.com/v1.0/me/photo/$value",

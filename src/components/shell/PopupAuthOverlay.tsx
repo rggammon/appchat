@@ -34,10 +34,10 @@ export default function PopupAuthOverlay({
     if (!instance || !account) return;
     setPopupLoading(true);
     try {
-      if (errors) {
+      if (errors.length > 0) {
         await instance.acquireTokenPopup({ account, scopes: scopes });
         dispatch(clearErrors());
-      } else if (customScopeErrors) {
+      } else if (customScopeErrors.length > 0) {
         await instance.acquireTokenPopup({ account, scopes: customScopes });
         dispatch(clearCustomScopeErrors());
       }
