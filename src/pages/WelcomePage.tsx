@@ -11,6 +11,7 @@ export default function WelcomePage({ scopes }: { scopes: string[] }) {
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100dvh",
+        padding: 16,
         background: tokens.colorBrandBackground,
       }}
     >
